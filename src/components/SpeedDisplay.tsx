@@ -17,7 +17,7 @@ const SpeedDisplay = () => {
               // Convert m/s to km/h
               const speedKmh = (position.coords.speed * 3.6);
               setSpeed(speedKmh);
-              setIsDriving(speedKmh > 30);
+              setIsDriving(speedKmh >= 20); // Updated threshold to 20km/h
             }
           },
           (error) => {
@@ -42,7 +42,7 @@ const SpeedDisplay = () => {
         const speedChange = Math.random() * 2 - 1;
         setSpeed(prevSpeed => {
           const newSpeed = Math.max(0, Math.min(60, prevSpeed + speedChange * 5));
-          setIsDriving(newSpeed > 30);
+          setIsDriving(newSpeed >= 20); // Updated threshold to 20km/h
           return newSpeed;
         });
       }, 500);
@@ -56,6 +56,12 @@ const SpeedDisplay = () => {
     };
   }, []);
 
+  const getSpeedColor = (speed: number) => {
+    if (speed > 20) return 'text-destructive';
+    if (speed < 20) return 'text-success';
+    return 'text-secondary';
+  };
+
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg animate-fade-in">
       <div className="flex items-center justify-between mb-4">
@@ -65,7 +71,7 @@ const SpeedDisplay = () => {
         </span>
       </div>
       <h2 className="text-lg font-medium text-secondary mb-2">Your current speed</h2>
-      <div className="text-4xl font-bold text-secondary mb-2">
+      <div className={`text-4xl font-bold mb-2 ${getSpeedColor(speed)}`}>
         {Math.round(speed)} km/h
       </div>
       <div className={`text-sm ${isDriving ? 'text-destructive' : 'text-gray-500'}`}>
