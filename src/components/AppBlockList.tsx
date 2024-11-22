@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Shield, Check } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 
@@ -16,12 +16,12 @@ const AppBlockList = () => {
     { id: 2, name: 'TikTok', blocked: false, category: 'Social Media' },
     { id: 3, name: 'Facebook', blocked: false, category: 'Social Media' },
     { id: 4, name: 'Twitter', blocked: false, category: 'Social Media' },
-    { id: 5, name: 'WhatsApp', blocked: false, category: 'Messaging' },
-    { id: 6, name: 'Telegram', blocked: false, category: 'Messaging' },
-    { id: 7, name: 'YouTube', blocked: false, category: 'Entertainment' },
-    { id: 8, name: 'Netflix', blocked: false, category: 'Entertainment' },
-    { id: 9, name: 'Candy Crush', blocked: false, category: 'Games' },
-    { id: 10, name: 'PUBG Mobile', blocked: false, category: 'Games' },
+    { id: 5, name: 'LinkedIn', blocked: false, category: 'Social Media' },
+    { id: 6, name: 'WhatsApp', blocked: false, category: 'Messaging' },
+    { id: 7, name: 'Telegram', blocked: false, category: 'Messaging' },
+    { id: 8, name: 'Gmail', blocked: false, category: 'Work' },
+    { id: 9, name: 'Outlook', blocked: false, category: 'Work' },
+    { id: 10, name: 'Slack', blocked: false, category: 'Work' },
   ]);
 
   const [isDriving, setIsDriving] = useState(false);

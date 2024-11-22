@@ -1,22 +1,59 @@
 import { useEffect, useState } from 'react';
 import { Car } from 'lucide-react';
+import { toast } from "sonner";
 
 const SpeedDisplay = () => {
   const [speed, setSpeed] = useState(0);
   const [isDriving, setIsDriving] = useState(false);
 
-  // Simulate more realistic speed changes
   useEffect(() => {
-    let currentSpeed = 0;
-    const interval = setInterval(() => {
-      // Simulate more natural speed changes
-      const speedChange = Math.random() * 2 - 1; // Random change between -1 and 1
-      currentSpeed = Math.max(0, Math.min(60, currentSpeed + speedChange * 5));
-      setSpeed(currentSpeed);
-      setIsDriving(currentSpeed > 30);
-    }, 500); // Update more frequently for smoother animation
+    let watchId: number;
 
-    return () => clearInterval(interval);
+    const startWatchingSpeed = () => {
+      if ('geolocation' in navigator) {
+        watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            if (position.coords.speed !== null) {
+              // Convert m/s to km/h
+              const speedKmh = (position.coords.speed * 3.6);
+              setSpeed(speedKmh);
+              setIsDriving(speedKmh > 30);
+            }
+          },
+          (error) => {
+            toast.error("Unable to access GPS. Using simulation mode.");
+            // Fallback to simulation if GPS fails
+            startSpeedSimulation();
+          },
+          {
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 5000
+          }
+        );
+      } else {
+        toast.error("GPS not available. Using simulation mode.");
+        startSpeedSimulation();
+      }
+    };
+
+    const startSpeedSimulation = () => {
+      const interval = setInterval(() => {
+        const speedChange = Math.random() * 2 - 1;
+        setSpeed(prevSpeed => {
+          const newSpeed = Math.max(0, Math.min(60, prevSpeed + speedChange * 5));
+          setIsDriving(newSpeed > 30);
+          return newSpeed;
+        });
+      }, 500);
+      return () => clearInterval(interval);
+    };
+
+    startWatchingSpeed();
+
+    return () => {
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+    };
   }, []);
 
   return (
@@ -27,6 +64,7 @@ const SpeedDisplay = () => {
           {isDriving ? 'Driving' : 'Stationary'}
         </span>
       </div>
+      <h2 className="text-lg font-medium text-secondary mb-2">Your current speed</h2>
       <div className="text-4xl font-bold text-secondary mb-2">
         {Math.round(speed)} km/h
       </div>
