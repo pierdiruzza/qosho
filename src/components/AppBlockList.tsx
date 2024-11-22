@@ -3,19 +3,29 @@ import { Shield, Check } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 
+interface App {
+  id: number;
+  name: string;
+  blocked: boolean;
+  category: string;
+}
+
 const AppBlockList = () => {
-  const [blockedApps, setBlockedApps] = useState([
-    { id: 1, name: 'Instagram', blocked: false },
-    { id: 2, name: 'TikTok', blocked: false },
-    { id: 3, name: 'Facebook', blocked: false },
-    { id: 4, name: 'Games', blocked: false },
-    { id: 5, name: 'YouTube', blocked: false },
-    { id: 6, name: 'Twitter', blocked: false },
+  const [blockedApps, setBlockedApps] = useState<App[]>([
+    { id: 1, name: 'Instagram', blocked: false, category: 'Social Media' },
+    { id: 2, name: 'TikTok', blocked: false, category: 'Social Media' },
+    { id: 3, name: 'Facebook', blocked: false, category: 'Social Media' },
+    { id: 4, name: 'Twitter', blocked: false, category: 'Social Media' },
+    { id: 5, name: 'WhatsApp', blocked: false, category: 'Messaging' },
+    { id: 6, name: 'Telegram', blocked: false, category: 'Messaging' },
+    { id: 7, name: 'YouTube', blocked: false, category: 'Entertainment' },
+    { id: 8, name: 'Netflix', blocked: false, category: 'Entertainment' },
+    { id: 9, name: 'Candy Crush', blocked: false, category: 'Games' },
+    { id: 10, name: 'PUBG Mobile', blocked: false, category: 'Games' },
   ]);
 
   const [isDriving, setIsDriving] = useState(false);
 
-  // Simulate speed monitoring and auto-block apps
   useEffect(() => {
     const checkSpeed = () => {
       // In a real app, this would use device sensors
@@ -49,29 +59,40 @@ const AppBlockList = () => {
     );
   };
 
+  const categories = Array.from(new Set(blockedApps.map(app => app.category)));
+
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg mt-6 animate-fade-in">
       <div className="flex items-center gap-2 mb-4">
         <Shield className="w-6 h-6 text-primary" />
         <h2 className="text-xl font-semibold text-secondary">Apps to Block</h2>
       </div>
-      <div className="space-y-4">
-        {blockedApps.map(app => (
-          <div key={app.id} className="flex items-center space-x-3">
-            <Checkbox
-              id={`app-${app.id}`}
-              checked={app.blocked}
-              onCheckedChange={() => toggleApp(app.id)}
-            />
-            <label
-              htmlFor={`app-${app.id}`}
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              {app.name}
-            </label>
-            {app.blocked && isDriving && (
-              <span className="ml-auto text-xs text-destructive">Blocked</span>
-            )}
+      <div className="space-y-6">
+        {categories.map(category => (
+          <div key={category} className="space-y-2">
+            <h3 className="font-medium text-sm text-muted-foreground">{category}</h3>
+            <div className="space-y-2">
+              {blockedApps
+                .filter(app => app.category === category)
+                .map(app => (
+                  <div key={app.id} className="flex items-center space-x-3">
+                    <Checkbox
+                      id={`app-${app.id}`}
+                      checked={app.blocked}
+                      onCheckedChange={() => toggleApp(app.id)}
+                    />
+                    <label
+                      htmlFor={`app-${app.id}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {app.name}
+                    </label>
+                    {app.blocked && isDriving && (
+                      <span className="ml-auto text-xs text-destructive">Blocked</span>
+                    )}
+                  </div>
+                ))}
+            </div>
           </div>
         ))}
       </div>
