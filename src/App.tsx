@@ -2,12 +2,18 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { Toaster } from "@/components/ui/toaster";
 import Index from "@/pages/Index";
 import Login from "@/pages/Login";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from '@supabase/supabase-js';
+import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from "react";
+
+// Initialize Supabase client
+const supabase = createClient(
+  'https://your-project-url.supabase.co',  // Replace with your Supabase project URL
+  'your-anon-key'  // Replace with your Supabase anon key
+);
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const supabase = createClientComponentClient();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -33,20 +39,22 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Index />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-      <Toaster />
-    </Router>
+    <SessionContextProvider supabaseClient={supabase}>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Index />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+        <Toaster />
+      </Router>
+    </SessionContextProvider>
   );
 }
 

@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const supabase = createClientComponentClient();
+  const supabase = useSupabaseClient();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ const LoginForm = () => {
           title: "Success",
           description: "Logged in successfully!",
         });
-        navigate("/dashboard");
+        navigate("/");
       }
     } catch (error) {
       toast({
