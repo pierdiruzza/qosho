@@ -42,76 +42,89 @@ const SafetyStats = () => {
   return (
     <TooltipProvider>
       <div className="bg-white rounded-xl p-6 shadow-lg mt-6 animate-fade-in">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-6">
           <Brain className="w-6 h-6 text-primary" />
           <h2 className="text-xl font-semibold text-secondary">Today's Driving Stats</h2>
         </div>
         
-        <div className="flex flex-col space-y-4">
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="flex justify-center items-center gap-2 mb-2">
-              <Timer className="w-6 h-6 text-primary" />
-              <UITooltip>
-                <TooltipTrigger>
-                  <Info className="w-4 h-4 text-gray-400" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Total time spent driving today</p>
-                </TooltipContent>
-              </UITooltip>
+        <div className="flex flex-col space-y-3">
+          <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+            <Timer className="w-8 h-8 text-primary mr-4" />
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">Driving Time</span>
+                <UITooltip>
+                  <TooltipTrigger>
+                    <Info className="w-4 h-4 text-gray-400" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Total time spent driving today</p>
+                  </TooltipContent>
+                </UITooltip>
+              </div>
+              <div className="text-xl font-bold text-secondary">{stats.drivingTime}m</div>
             </div>
-            <div className="text-2xl font-bold text-secondary">{stats.drivingTime}m</div>
-            <div className="text-sm text-gray-500">Driving Time</div>
-          </div>
-          
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="flex justify-center items-center gap-2 mb-2">
-              <Phone className="w-6 h-6 text-warning" />
-              <UITooltip>
-                <TooltipTrigger>
-                  <Info className="w-4 h-4 text-gray-400" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Percentage of driving time where phone usage was detected</p>
-                </TooltipContent>
-              </UITooltip>
-            </div>
-            <div className="text-2xl font-bold text-secondary">{stats.phoneUsagePercent}%</div>
-            <div className="text-sm text-gray-500">Phone Usage</div>
           </div>
 
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="flex justify-center items-center gap-2 mb-2">
-              <Gauge className="w-6 h-6 text-primary" />
-              <UITooltip>
-                <TooltipTrigger>
-                  <Info className="w-4 h-4 text-gray-400" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Average speed during today's driving sessions</p>
-                </TooltipContent>
-              </UITooltip>
+          <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+            <Phone className="w-8 h-8 text-warning mr-4" />
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">Phone Usage</span>
+                <UITooltip>
+                  <TooltipTrigger>
+                    <Info className="w-4 h-4 text-gray-400" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Percentage of driving time where phone usage was detected</p>
+                  </TooltipContent>
+                </UITooltip>
+              </div>
+              <div className="text-xl font-bold text-secondary">{stats.phoneUsagePercent}%</div>
             </div>
-            <div className="text-2xl font-bold text-secondary">{stats.averageSpeed}</div>
-            <div className="text-sm text-gray-500">Avg Speed (km/h)</div>
           </div>
 
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="flex justify-center items-center gap-2 mb-2">
-              <Brain className={`w-6 h-6 ${getFocusScoreColor(stats.focusScore)}`} />
-              <UITooltip>
-                <TooltipTrigger>
-                  <Info className="w-4 h-4 text-gray-400" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Score from 1-5 indicating your focus level while driving (1 = most focused)</p>
-                </TooltipContent>
-              </UITooltip>
+          <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+            <Gauge className="w-8 h-8 text-primary mr-4" />
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">Average Speed</span>
+                <UITooltip>
+                  <TooltipTrigger>
+                    <Info className="w-4 h-4 text-gray-400" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Average speed during today's driving sessions</p>
+                  </TooltipContent>
+                </UITooltip>
+              </div>
+              <div className="text-xl font-bold text-secondary">{stats.averageSpeed} km/h</div>
             </div>
-            <div className={`text-2xl font-bold ${getFocusScoreColor(stats.focusScore)}`}>
-              {stats.focusScore}/5
+          </div>
+
+          <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+            <Brain className={`w-8 h-8 ${getFocusScoreColor(stats.focusScore)} mr-4`} />
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">Focus Score</span>
+                <UITooltip>
+                  <TooltipTrigger>
+                    <Info className="w-4 h-4 text-gray-400" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Score from 1-5 indicating your focus level while driving (1 = most focused)</p>
+                  </TooltipContent>
+                </UITooltip>
+              </div>
+              <div className="flex items-center">
+                <span className={`text-xl font-bold ${getFocusScoreColor(stats.focusScore)}`}>
+                  {stats.focusScore}/5
+                </span>
+                <span className="ml-2 text-sm text-gray-500">
+                  {getFocusScoreText(stats.focusScore)}
+                </span>
+              </div>
             </div>
-            <div className="text-sm text-gray-500">{getFocusScoreText(stats.focusScore)}</div>
           </div>
         </div>
 
