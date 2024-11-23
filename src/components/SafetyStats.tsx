@@ -47,7 +47,7 @@ const SafetyStats = () => {
           <h2 className="text-xl font-semibold text-secondary">Today's Driving Stats</h2>
         </div>
         
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="flex flex-col space-y-4">
           <div className="text-center p-4 bg-gray-50 rounded-lg">
             <div className="flex justify-center items-center gap-2 mb-2">
               <Timer className="w-6 h-6 text-primary" />
