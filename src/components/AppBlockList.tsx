@@ -3,6 +3,9 @@ import { Shield } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from 'react-router-dom';
+import { supabase } from "@/integrations/supabase/client";
+import { useSessionContext } from '@supabase/auth-helpers-react';
 
 interface App {
   id: number;
@@ -16,6 +19,8 @@ interface AppBlockListProps {
 }
 
 const AppBlockList = ({ editable = false }: AppBlockListProps) => {
+  const navigate = useNavigate();
+  const { session } = useSessionContext();
   const [blockedApps, setBlockedApps] = useState<App[]>([
     { id: 1, name: 'Instagram', blocked: false, category: 'Social Media' },
     { id: 2, name: 'TikTok', blocked: false, category: 'Social Media' },
@@ -29,31 +34,29 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
     { id: 10, name: 'Slack', blocked: false, category: 'Work' },
   ]);
 
-  const [isDriving, setIsDriving] = useState(false);
-
   useEffect(() => {
-    const checkSpeed = () => {
-      // In a real app, this would use device sensors
-      const currentSpeed = Math.random() * 60;
-      const isOverSpeedLimit = currentSpeed > 30;
-      
-      if (isOverSpeedLimit !== isDriving) {
-        setIsDriving(isOverSpeedLimit);
-        if (isOverSpeedLimit) {
-          closeBlockedApps();
-        }
-      }
-    };
-
-    const interval = setInterval(checkSpeed, 2000);
-    return () => clearInterval(interval);
-  }, [isDriving]);
-
-  const closeBlockedApps = () => {
-    const appsToClose = blockedApps.filter(app => app.blocked).map(app => app.name);
-    if (appsToClose.length > 0) {
-      toast.info(`Closing apps: ${appsToClose.join(', ')}`);
+    if (session?.user?.id) {
+      loadBlockedApps();
     }
+  }, [session?.user?.id]);
+
+  const loadBlockedApps = async () => {
+    const { data, error } = await supabase
+      .from('blocked_apps')
+      .select('app_id');
+
+    if (error) {
+      toast.error('Failed to load blocked apps');
+      return;
+    }
+
+    const blockedAppIds = data.map(row => row.app_id);
+    setBlockedApps(apps =>
+      apps.map(app => ({
+        ...app,
+        blocked: blockedAppIds.includes(app.id)
+      }))
+    );
   };
 
   const toggleApp = (id: number) => {
@@ -65,20 +68,61 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
     );
   };
 
-  const handleSave = () => {
-    if (!editable) return;
+  const handleSave = async () => {
+    if (!editable || !session?.user?.id) return;
+
+    // Delete all existing blocked apps
+    const { error: deleteError } = await supabase
+      .from('blocked_apps')
+      .delete()
+      .eq('user_id', session.user.id);
+
+    if (deleteError) {
+      toast.error('Failed to update blocked apps');
+      return;
+    }
+
+    // Insert newly blocked apps
+    const appsToBlock = blockedApps.filter(app => app.blocked);
+    if (appsToBlock.length > 0) {
+      const { error: insertError } = await supabase
+        .from('blocked_apps')
+        .insert(
+          appsToBlock.map(app => ({
+            user_id: session.user.id,
+            app_id: app.id
+          }))
+        );
+
+      if (insertError) {
+        toast.error('Failed to save blocked apps');
+        return;
+      }
+    }
+
     toast.success("App blocking preferences saved!");
   };
 
-  const categories = Array.from(new Set(blockedApps.map(app => app.category)));
+  const categories = Array.from(new Set(blockedApps.filter(app => editable || app.blocked).map(app => app.category)));
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg mt-6 animate-fade-in">
-      <div className="flex items-center gap-2 mb-4">
-        <Shield className="w-6 h-6 text-primary" />
-        <h2 className="text-xl font-semibold text-secondary">
-          {editable ? "Select Apps to Block" : "Blocked Apps"}
-        </h2>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Shield className="w-6 h-6 text-primary" />
+          <h2 className="text-xl font-semibold text-secondary">
+            {editable ? "Select Apps to Block" : "Blocked Apps"}
+          </h2>
+        </div>
+        {!editable && (
+          <Button
+            variant="outline"
+            onClick={() => navigate('/apps')}
+            className="text-sm"
+          >
+            Add apps
+          </Button>
+        )}
       </div>
       <div className="space-y-6">
         {categories.map(category => (
@@ -86,7 +130,7 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
             <h3 className="font-medium text-sm text-muted-foreground">{category}</h3>
             <div className="space-y-2">
               {blockedApps
-                .filter(app => app.category === category)
+                .filter(app => app.category === category && (editable || app.blocked))
                 .map(app => (
                   <div key={app.id} className="flex items-center space-x-3">
                     {editable ? (
@@ -104,14 +148,9 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
                         </label>
                       </>
                     ) : (
-                      app.blocked && (
-                        <div className="text-sm font-medium leading-none">
-                          {app.name}
-                        </div>
-                      )
-                    )}
-                    {app.blocked && isDriving && !editable && (
-                      <span className="ml-auto text-xs text-destructive">Blocked</span>
+                      <div className="text-sm font-medium leading-none">
+                        {app.name}
+                      </div>
                     )}
                   </div>
                 ))}
@@ -125,11 +164,6 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
             Save Changes
           </Button>
         </div>
-      )}
-      {isDriving && (
-        <p className="mt-4 text-sm text-destructive">
-          Driving detected - selected apps are blocked
-        </p>
       )}
     </div>
   );
