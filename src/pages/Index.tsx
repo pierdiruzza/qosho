@@ -10,7 +10,7 @@ const Index = () => {
         <h1 className="text-2xl font-bold text-secondary mb-6">QOSHO</h1>
         <QoshoToggle />
         <SpeedDisplay />
-        <AppBlockList />
+        <AppBlockList editable={false} />
       </div>
       <Navigation />
     </div>
