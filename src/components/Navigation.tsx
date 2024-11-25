@@ -1,4 +1,4 @@
-import { Home, Apps, LineChart } from "lucide-react";
+import { Home, AppWindow, LineChart } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const Navigation = () => {
@@ -22,7 +22,7 @@ const Navigation = () => {
           to="/apps"
           className={`flex flex-col items-center gap-1 ${isActive("/apps")}`}
         >
-          <Apps className="w-6 h-6" />
+          <AppWindow className="w-6 h-6" />
           <span className="text-xs">Apps</span>
         </Link>
         <Link
