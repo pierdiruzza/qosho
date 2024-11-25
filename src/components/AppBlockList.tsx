@@ -67,7 +67,6 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
 
   const handleSave = () => {
     if (!editable) return;
-    // In a real app, this would save to a backend
     toast.success("App blocking preferences saved!");
   };
 
@@ -90,21 +89,28 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
                 .filter(app => app.category === category)
                 .map(app => (
                   <div key={app.id} className="flex items-center space-x-3">
-                    <Checkbox
-                      id={`app-${app.id}`}
-                      checked={app.blocked}
-                      onCheckedChange={() => toggleApp(app.id)}
-                      disabled={!editable}
-                    />
-                    <label
-                      htmlFor={`app-${app.id}`}
-                      className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
-                        !editable ? 'cursor-default' : 'cursor-pointer'
-                      }`}
-                    >
-                      {app.name}
-                    </label>
-                    {app.blocked && isDriving && (
+                    {editable ? (
+                      <>
+                        <Checkbox
+                          id={`app-${app.id}`}
+                          checked={app.blocked}
+                          onCheckedChange={() => toggleApp(app.id)}
+                        />
+                        <label
+                          htmlFor={`app-${app.id}`}
+                          className="text-sm font-medium leading-none cursor-pointer"
+                        >
+                          {app.name}
+                        </label>
+                      </>
+                    ) : (
+                      app.blocked && (
+                        <div className="text-sm font-medium leading-none">
+                          {app.name}
+                        </div>
+                      )
+                    )}
+                    {app.blocked && isDriving && !editable && (
                       <span className="ml-auto text-xs text-destructive">Blocked</span>
                     )}
                   </div>
