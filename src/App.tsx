@@ -3,6 +3,8 @@ import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { supabase } from "./integrations/supabase/client";
 import Index from "@/pages/Index";
 import Login from "@/pages/Login";
+import Apps from "@/pages/Apps";
+import Dashboard from "@/pages/Dashboard";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const session = supabase.auth.getSession();
@@ -25,6 +27,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Index />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/apps"
+            element={
+              <ProtectedRoute>
+                <Apps />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
               </ProtectedRoute>
             }
           />
