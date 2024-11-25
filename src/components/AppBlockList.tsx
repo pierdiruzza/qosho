@@ -41,22 +41,29 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
   }, [session?.user?.id]);
 
   const loadBlockedApps = async () => {
-    const { data, error } = await supabase
-      .from('blocked_apps')
-      .select('app_id');
+    try {
+      const { data, error } = await supabase
+        .from('blocked_apps')
+        .select('app_id')
+        .eq('user_id', session?.user?.id);
 
-    if (error) {
+      if (error) {
+        toast.error('Failed to load blocked apps');
+        return;
+      }
+
+      if (data) {
+        const blockedAppIds = data.map(row => row.app_id);
+        setBlockedApps(apps =>
+          apps.map(app => ({
+            ...app,
+            blocked: blockedAppIds.includes(app.id)
+          }))
+        );
+      }
+    } catch (error) {
       toast.error('Failed to load blocked apps');
-      return;
     }
-
-    const blockedAppIds = data.map(row => row.app_id);
-    setBlockedApps(apps =>
-      apps.map(app => ({
-        ...app,
-        blocked: blockedAppIds.includes(app.id)
-      }))
-    );
   };
 
   const toggleApp = (id: number) => {
@@ -71,36 +78,40 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
   const handleSave = async () => {
     if (!editable || !session?.user?.id) return;
 
-    // Delete all existing blocked apps
-    const { error: deleteError } = await supabase
-      .from('blocked_apps')
-      .delete()
-      .eq('user_id', session.user.id);
-
-    if (deleteError) {
-      toast.error('Failed to update blocked apps');
-      return;
-    }
-
-    // Insert newly blocked apps
-    const appsToBlock = blockedApps.filter(app => app.blocked);
-    if (appsToBlock.length > 0) {
-      const { error: insertError } = await supabase
+    try {
+      // Delete all existing blocked apps
+      const { error: deleteError } = await supabase
         .from('blocked_apps')
-        .insert(
-          appsToBlock.map(app => ({
-            user_id: session.user.id,
-            app_id: app.id
-          }))
-        );
+        .delete()
+        .eq('user_id', session.user.id);
 
-      if (insertError) {
-        toast.error('Failed to save blocked apps');
+      if (deleteError) {
+        toast.error('Failed to update blocked apps');
         return;
       }
-    }
 
-    toast.success("App blocking preferences saved!");
+      // Insert newly blocked apps
+      const appsToBlock = blockedApps.filter(app => app.blocked);
+      if (appsToBlock.length > 0) {
+        const { error: insertError } = await supabase
+          .from('blocked_apps')
+          .insert(
+            appsToBlock.map(app => ({
+              user_id: session.user.id,
+              app_id: app.id
+            }))
+          );
+
+        if (insertError) {
+          toast.error('Failed to save blocked apps');
+          return;
+        }
+      }
+
+      toast.success('Apps blocked successfully!');
+    } catch (error) {
+      toast.error('An error occurred while saving');
+    }
   };
 
   const categories = Array.from(new Set(blockedApps.filter(app => editable || app.blocked).map(app => app.category)));
