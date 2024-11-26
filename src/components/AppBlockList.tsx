@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Shield } from 'lucide-react';
+import { Shield, Trash2 } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ interface App {
   name: string;
   blocked: boolean;
   category: string;
+  logo: string;
 }
 
 interface AppBlockListProps {
@@ -22,16 +23,16 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
   const navigate = useNavigate();
   const { session } = useSessionContext();
   const [blockedApps, setBlockedApps] = useState<App[]>([
-    { id: 1, name: 'Instagram', blocked: false, category: 'Social Media' },
-    { id: 2, name: 'TikTok', blocked: false, category: 'Social Media' },
-    { id: 3, name: 'Facebook', blocked: false, category: 'Social Media' },
-    { id: 4, name: 'Twitter', blocked: false, category: 'Social Media' },
-    { id: 5, name: 'LinkedIn', blocked: false, category: 'Social Media' },
-    { id: 6, name: 'WhatsApp', blocked: false, category: 'Messaging' },
-    { id: 7, name: 'Telegram', blocked: false, category: 'Messaging' },
-    { id: 8, name: 'Gmail', blocked: false, category: 'Work' },
-    { id: 9, name: 'Outlook', blocked: false, category: 'Work' },
-    { id: 10, name: 'Slack', blocked: false, category: 'Work' },
+    { id: 1, name: 'Instagram', blocked: false, category: 'Social Media', logo: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=64&h=64&fit=crop' },
+    { id: 2, name: 'TikTok', blocked: false, category: 'Social Media', logo: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=64&h=64&fit=crop' },
+    { id: 3, name: 'Facebook', blocked: false, category: 'Social Media', logo: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=64&h=64&fit=crop' },
+    { id: 4, name: 'Twitter', blocked: false, category: 'Social Media', logo: 'https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=64&h=64&fit=crop' },
+    { id: 5, name: 'LinkedIn', blocked: false, category: 'Social Media', logo: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=64&h=64&fit=crop' },
+    { id: 6, name: 'WhatsApp', blocked: false, category: 'Messaging', logo: 'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=64&h=64&fit=crop' },
+    { id: 7, name: 'Telegram', blocked: false, category: 'Messaging', logo: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=64&h=64&fit=crop' },
+    { id: 8, name: 'Gmail', blocked: false, category: 'Work', logo: 'https://images.unsplash.com/photo-1487887235947-a955ef187fcc?w=64&h=64&fit=crop' },
+    { id: 9, name: 'Outlook', blocked: false, category: 'Work', logo: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=64&h=64&fit=crop' },
+    { id: 10, name: 'Slack', blocked: false, category: 'Work', logo: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=64&h=64&fit=crop' },
   ]);
 
   useEffect(() => {
@@ -77,11 +78,32 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
     );
   };
 
+  const handleClearAll = async () => {
+    if (!editable || !session?.user?.id) return;
+    try {
+      const { error } = await supabase
+        .from('blocked_apps')
+        .delete()
+        .eq('user_id', session.user.id);
+
+      if (error) {
+        console.error('Error clearing blocked apps:', error);
+        toast.error('Failed to clear blocked apps');
+        return;
+      }
+
+      setBlockedApps(apps => apps.map(app => ({ ...app, blocked: false })));
+      toast.success('All apps unblocked successfully!');
+    } catch (error) {
+      console.error('Error in handleClearAll:', error);
+      toast.error('An error occurred while clearing apps');
+    }
+  };
+
   const handleSave = async () => {
     if (!editable || !session?.user?.id) return;
 
     try {
-      // Delete all existing blocked apps
       const { error: deleteError } = await supabase
         .from('blocked_apps')
         .delete()
@@ -93,7 +115,6 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         return;
       }
 
-      // Insert newly blocked apps
       const appsToBlock = blockedApps.filter(app => app.blocked);
       if (appsToBlock.length > 0) {
         const { error: insertError } = await supabase
@@ -121,23 +142,35 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-lg mt-6 animate-fade-in">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-white rounded-xl p-6 shadow-lg mt-6 animate-fade-in" style={{ fontFamily: 'Airbnb Cereal, sans-serif' }}>
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Shield className="w-6 h-6 text-primary" />
           <h2 className="text-xl font-semibold text-secondary">
             {editable ? "Select Apps to Block" : "Blocked Apps"}
           </h2>
         </div>
-        {!editable && (
-          <Button
-            variant="outline"
-            onClick={() => navigate('/apps')}
-            className="text-sm"
-          >
-            Add apps
-          </Button>
-        )}
+        <div className="flex gap-2">
+          {editable && (
+            <Button
+              variant="outline"
+              onClick={handleClearAll}
+              className="text-sm flex items-center gap-1"
+            >
+              <Trash2 className="w-4 h-4" />
+              Clear All
+            </Button>
+          )}
+          {!editable && (
+            <Button
+              variant="outline"
+              onClick={() => navigate('/apps')}
+              className="text-sm"
+            >
+              Manage apps
+            </Button>
+          )}
+        </div>
       </div>
       <div className="space-y-6">
         {Object.entries(
@@ -153,9 +186,14 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         ).map(([category, apps]) => (
           <div key={category} className="space-y-2">
             <h3 className="font-medium text-sm text-muted-foreground">{category}</h3>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {apps.map(app => (
-                <div key={app.id} className="flex items-center space-x-3">
+                <div key={app.id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  <img
+                    src={app.logo}
+                    alt={`${app.name} logo`}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
                   {editable ? (
                     <>
                       <Checkbox
@@ -165,13 +203,13 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
                       />
                       <label
                         htmlFor={`app-${app.id}`}
-                        className="text-sm font-medium leading-none cursor-pointer"
+                        className="text-sm font-medium leading-none cursor-pointer flex-1"
                       >
                         {app.name}
                       </label>
                     </>
                   ) : (
-                    <div className="text-sm font-medium leading-none">
+                    <div className="text-sm font-medium leading-none flex-1">
                       {app.name}
                     </div>
                   )}

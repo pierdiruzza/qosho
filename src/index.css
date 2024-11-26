@@ -1,3 +1,5 @@
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -73,5 +75,30 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Airbnb Cereal', 'Satoshi', system-ui, sans-serif;
   }
+}
+
+@font-face {
+  font-family: 'Airbnb Cereal';
+  src: url('https://cdn.jsdelivr.net/gh/mfd/AirbnbCereal@1.0.0/AirbnbCereal-Book.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Airbnb Cereal';
+  src: url('https://cdn.jsdelivr.net/gh/mfd/AirbnbCereal@1.0.0/AirbnbCereal-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Airbnb Cereal';
+  src: url('https://cdn.jsdelivr.net/gh/mfd/AirbnbCereal@1.0.0/AirbnbCereal-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
 }
