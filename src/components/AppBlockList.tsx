@@ -54,8 +54,8 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
 
       if (data) {
         const blockedAppIds = data.map(row => row.app_id);
-        setBlockedApps(apps =>
-          apps.map(app => ({
+        setBlockedApps(prevApps =>
+          prevApps.map(app => ({
             ...app,
             blocked: blockedAppIds.includes(app.id)
           }))
@@ -108,6 +108,8 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         }
       }
 
+      // Reload the blocked apps to ensure the display is up to date
+      await loadBlockedApps();
       toast.success('Apps blocked successfully!');
     } catch (error) {
       toast.error('An error occurred while saving');
