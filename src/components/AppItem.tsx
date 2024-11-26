@@ -10,23 +10,24 @@ interface AppItemProps {
 
 const AppItem = ({ id, name, blocked, editable = false, onToggle }: AppItemProps) => {
   return (
-    <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+    <div className="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
       {editable ? (
         <>
           <Checkbox
             id={`app-${id}`}
             checked={blocked}
             onCheckedChange={() => onToggle?.(id)}
+            className="h-5 w-5 rounded-md border-gray-200"
           />
           <label
             htmlFor={`app-${id}`}
-            className="text-sm font-medium leading-none cursor-pointer flex-1"
+            className="ml-3 text-sm font-medium text-gray-700 cursor-pointer flex-1"
           >
             {name}
           </label>
         </>
       ) : (
-        <div className="text-sm font-medium leading-none flex-1">
+        <div className="text-sm font-medium text-gray-700 flex-1 pl-2">
           {name}
         </div>
       )}

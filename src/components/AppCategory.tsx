@@ -10,9 +10,9 @@ interface AppCategoryProps {
 
 const AppCategory = ({ category, apps, editable = false, onToggle }: AppCategoryProps) => {
   return (
-    <div className="space-y-2">
-      <h3 className="font-medium text-sm text-muted-foreground">{category}</h3>
-      <div className="space-y-1 bg-white rounded-lg border border-gray-100">
+    <div className="space-y-3">
+      <h3 className="text-sm font-medium text-gray-500">{category}</h3>
+      <div className="bg-white rounded-xl shadow-card divide-y divide-gray-50">
         {apps.map(app => (
           <AppItem
             key={app.id}

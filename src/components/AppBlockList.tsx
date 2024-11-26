@@ -131,11 +131,11 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
   );
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm mt-6 animate-fade-in" style={{ fontFamily: 'Airbnb Cereal, sans-serif' }}>
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Shield className="w-6 h-6 text-primary" />
-          <h2 className="text-xl font-semibold text-secondary">
+          <Shield className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold text-secondary-foreground">
             {editable ? "Select Apps to Block" : "Blocked Apps"}
           </h2>
         </div>
@@ -144,7 +144,7 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
             <Button
               variant="outline"
               onClick={handleClearAll}
-              className="text-sm flex items-center gap-1"
+              className="text-sm flex items-center gap-1 h-9"
             >
               <Trash2 className="w-4 h-4" />
               Clear All
@@ -154,14 +154,14 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
             <Button
               variant="outline"
               onClick={() => navigate('/apps')}
-              className="text-sm"
+              className="text-sm h-9"
             >
               Manage apps
             </Button>
           )}
         </div>
       </div>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {groupedApps.map(([category, apps]) => (
           <AppCategory
             key={category}
@@ -174,7 +174,7 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
       </div>
       {editable && (
         <div className="mt-6">
-          <Button onClick={handleSave} className="w-full">
+          <Button onClick={handleSave} className="w-full bg-primary hover:bg-primary/90">
             Save Changes
           </Button>
         </div>

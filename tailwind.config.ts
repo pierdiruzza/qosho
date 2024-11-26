@@ -25,12 +25,12 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#60A5FA",
+          DEFAULT: "#4B56F0",
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#0F172A",
-          foreground: "#FFFFFF",
+          DEFAULT: "#F4F6F8",
+          foreground: "#1A1D1F",
         },
         success: {
           DEFAULT: "#22C55E",
@@ -40,6 +40,13 @@ export default {
           DEFAULT: "#EF4444",
           foreground: "#FFFFFF",
         },
+      },
+      borderRadius: {
+        'xl': '1rem',
+        '2xl': '1.5rem',
+      },
+      boxShadow: {
+        'card': '0 2px 8px rgba(0, 0, 0, 0.05)',
       },
       keyframes: {
         "fade-in": {
