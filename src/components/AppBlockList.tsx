@@ -1,19 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Shield, Trash2 } from 'lucide-react';
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from '@supabase/auth-helpers-react';
-
-interface App {
-  id: number;
-  name: string;
-  blocked: boolean;
-  category: string;
-  logo: string;
-}
+import { App } from "@/types/app";
+import AppCategory from "./AppCategory";
 
 interface AppBlockListProps {
   editable?: boolean;
@@ -23,16 +16,16 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
   const navigate = useNavigate();
   const { session } = useSessionContext();
   const [blockedApps, setBlockedApps] = useState<App[]>([
-    { id: 1, name: 'Instagram', blocked: false, category: 'Social Media', logo: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=64&h=64&fit=crop' },
-    { id: 2, name: 'TikTok', blocked: false, category: 'Social Media', logo: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=64&h=64&fit=crop' },
-    { id: 3, name: 'Facebook', blocked: false, category: 'Social Media', logo: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=64&h=64&fit=crop' },
-    { id: 4, name: 'Twitter', blocked: false, category: 'Social Media', logo: 'https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=64&h=64&fit=crop' },
-    { id: 5, name: 'LinkedIn', blocked: false, category: 'Social Media', logo: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=64&h=64&fit=crop' },
-    { id: 6, name: 'WhatsApp', blocked: false, category: 'Messaging', logo: 'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=64&h=64&fit=crop' },
-    { id: 7, name: 'Telegram', blocked: false, category: 'Messaging', logo: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=64&h=64&fit=crop' },
-    { id: 8, name: 'Gmail', blocked: false, category: 'Work', logo: 'https://images.unsplash.com/photo-1487887235947-a955ef187fcc?w=64&h=64&fit=crop' },
-    { id: 9, name: 'Outlook', blocked: false, category: 'Work', logo: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=64&h=64&fit=crop' },
-    { id: 10, name: 'Slack', blocked: false, category: 'Work', logo: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=64&h=64&fit=crop' },
+    { id: 1, name: 'Instagram', blocked: false, category: 'Social Media' },
+    { id: 2, name: 'TikTok', blocked: false, category: 'Social Media' },
+    { id: 3, name: 'Facebook', blocked: false, category: 'Social Media' },
+    { id: 4, name: 'Twitter', blocked: false, category: 'Social Media' },
+    { id: 5, name: 'LinkedIn', blocked: false, category: 'Social Media' },
+    { id: 6, name: 'WhatsApp', blocked: false, category: 'Messaging' },
+    { id: 7, name: 'Telegram', blocked: false, category: 'Messaging' },
+    { id: 8, name: 'Gmail', blocked: false, category: 'Work' },
+    { id: 9, name: 'Outlook', blocked: false, category: 'Work' },
+    { id: 10, name: 'Slack', blocked: false, category: 'Work' },
   ]);
 
   useEffect(() => {
@@ -48,11 +41,7 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         .select('app_id')
         .eq('user_id', session?.user?.id);
 
-      if (error) {
-        console.error('Error loading blocked apps:', error);
-        toast.error('Failed to load blocked apps');
-        return;
-      }
+      if (error) throw error;
 
       if (data) {
         const blockedAppIds = data.map(row => row.app_id);
@@ -64,7 +53,7 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         );
       }
     } catch (error) {
-      console.error('Error in loadBlockedApps:', error);
+      console.error('Error loading blocked apps:', error);
       toast.error('Failed to load blocked apps');
     }
   };
@@ -86,17 +75,13 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         .delete()
         .eq('user_id', session.user.id);
 
-      if (error) {
-        console.error('Error clearing blocked apps:', error);
-        toast.error('Failed to clear blocked apps');
-        return;
-      }
+      if (error) throw error;
 
       setBlockedApps(apps => apps.map(app => ({ ...app, blocked: false })));
       toast.success('All apps unblocked successfully!');
     } catch (error) {
-      console.error('Error in handleClearAll:', error);
-      toast.error('An error occurred while clearing apps');
+      console.error('Error clearing blocked apps:', error);
+      toast.error('Failed to clear blocked apps');
     }
   };
 
@@ -109,11 +94,7 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         .delete()
         .eq('user_id', session.user.id);
 
-      if (deleteError) {
-        console.error('Error deleting blocked apps:', deleteError);
-        toast.error('Failed to update blocked apps');
-        return;
-      }
+      if (deleteError) throw deleteError;
 
       const appsToBlock = blockedApps.filter(app => app.blocked);
       if (appsToBlock.length > 0) {
@@ -126,23 +107,31 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
             }))
           );
 
-        if (insertError) {
-          console.error('Error inserting blocked apps:', insertError);
-          toast.error('Failed to save blocked apps');
-          return;
-        }
+        if (insertError) throw insertError;
       }
 
       await loadBlockedApps();
       toast.success('Apps blocked successfully!');
     } catch (error) {
-      console.error('Error in handleSave:', error);
-      toast.error('An error occurred while saving');
+      console.error('Error saving blocked apps:', error);
+      toast.error('Failed to save blocked apps');
     }
   };
 
+  const groupedApps = Object.entries(
+    blockedApps
+      .filter(app => editable || app.blocked)
+      .reduce((acc, app) => {
+        if (!acc[app.category]) {
+          acc[app.category] = [];
+        }
+        acc[app.category].push(app);
+        return acc;
+      }, {} as Record<string, App[]>)
+  );
+
   return (
-    <div className="bg-white rounded-xl p-6 shadow-lg mt-6 animate-fade-in" style={{ fontFamily: 'Airbnb Cereal, sans-serif' }}>
+    <div className="bg-white rounded-xl p-6 shadow-sm mt-6 animate-fade-in" style={{ fontFamily: 'Airbnb Cereal, sans-serif' }}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Shield className="w-6 h-6 text-primary" />
@@ -173,50 +162,14 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         </div>
       </div>
       <div className="space-y-6">
-        {Object.entries(
-          blockedApps
-            .filter(app => editable || app.blocked)
-            .reduce((acc, app) => {
-              if (!acc[app.category]) {
-                acc[app.category] = [];
-              }
-              acc[app.category].push(app);
-              return acc;
-            }, {} as Record<string, App[]>)
-        ).map(([category, apps]) => (
-          <div key={category} className="space-y-2">
-            <h3 className="font-medium text-sm text-muted-foreground">{category}</h3>
-            <div className="space-y-3">
-              {apps.map(app => (
-                <div key={app.id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                  <img
-                    src={app.logo}
-                    alt={`${app.name} logo`}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                  {editable ? (
-                    <>
-                      <Checkbox
-                        id={`app-${app.id}`}
-                        checked={app.blocked}
-                        onCheckedChange={() => toggleApp(app.id)}
-                      />
-                      <label
-                        htmlFor={`app-${app.id}`}
-                        className="text-sm font-medium leading-none cursor-pointer flex-1"
-                      >
-                        {app.name}
-                      </label>
-                    </>
-                  ) : (
-                    <div className="text-sm font-medium leading-none flex-1">
-                      {app.name}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+        {groupedApps.map(([category, apps]) => (
+          <AppCategory
+            key={category}
+            category={category}
+            apps={apps}
+            editable={editable}
+            onToggle={toggleApp}
+          />
         ))}
       </div>
       {editable && (
