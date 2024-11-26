@@ -48,6 +48,7 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         .eq('user_id', session?.user?.id);
 
       if (error) {
+        console.error('Error loading blocked apps:', error);
         toast.error('Failed to load blocked apps');
         return;
       }
@@ -62,6 +63,7 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         );
       }
     } catch (error) {
+      console.error('Error in loadBlockedApps:', error);
       toast.error('Failed to load blocked apps');
     }
   };
@@ -86,6 +88,7 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         .eq('user_id', session.user.id);
 
       if (deleteError) {
+        console.error('Error deleting blocked apps:', deleteError);
         toast.error('Failed to update blocked apps');
         return;
       }
@@ -103,20 +106,19 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
           );
 
         if (insertError) {
+          console.error('Error inserting blocked apps:', insertError);
           toast.error('Failed to save blocked apps');
           return;
         }
       }
 
-      // Reload the blocked apps to ensure the display is up to date
       await loadBlockedApps();
       toast.success('Apps blocked successfully!');
     } catch (error) {
+      console.error('Error in handleSave:', error);
       toast.error('An error occurred while saving');
     }
   };
-
-  const categories = Array.from(new Set(blockedApps.filter(app => editable || app.blocked).map(app => app.category)));
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg mt-6 animate-fade-in">
@@ -138,35 +140,43 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         )}
       </div>
       <div className="space-y-6">
-        {categories.map(category => (
+        {Object.entries(
+          blockedApps
+            .filter(app => editable || app.blocked)
+            .reduce((acc, app) => {
+              if (!acc[app.category]) {
+                acc[app.category] = [];
+              }
+              acc[app.category].push(app);
+              return acc;
+            }, {} as Record<string, App[]>)
+        ).map(([category, apps]) => (
           <div key={category} className="space-y-2">
             <h3 className="font-medium text-sm text-muted-foreground">{category}</h3>
             <div className="space-y-2">
-              {blockedApps
-                .filter(app => app.category === category && (editable || app.blocked))
-                .map(app => (
-                  <div key={app.id} className="flex items-center space-x-3">
-                    {editable ? (
-                      <>
-                        <Checkbox
-                          id={`app-${app.id}`}
-                          checked={app.blocked}
-                          onCheckedChange={() => toggleApp(app.id)}
-                        />
-                        <label
-                          htmlFor={`app-${app.id}`}
-                          className="text-sm font-medium leading-none cursor-pointer"
-                        >
-                          {app.name}
-                        </label>
-                      </>
-                    ) : (
-                      <div className="text-sm font-medium leading-none">
+              {apps.map(app => (
+                <div key={app.id} className="flex items-center space-x-3">
+                  {editable ? (
+                    <>
+                      <Checkbox
+                        id={`app-${app.id}`}
+                        checked={app.blocked}
+                        onCheckedChange={() => toggleApp(app.id)}
+                      />
+                      <label
+                        htmlFor={`app-${app.id}`}
+                        className="text-sm font-medium leading-none cursor-pointer"
+                      >
                         {app.name}
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      </label>
+                    </>
+                  ) : (
+                    <div className="text-sm font-medium leading-none">
+                      {app.name}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         ))}
