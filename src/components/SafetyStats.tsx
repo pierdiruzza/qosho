@@ -8,13 +8,11 @@ import {
 } from "@/components/ui/tooltip";
 
 const SafetyStats = () => {
-  // This would typically come from a backend/state management
-  // For now using mock data
   const stats = {
-    drivingTime: 45, // minutes
-    phoneUsagePercent: 15, // percentage
-    averageSpeed: 35, // km/h
-    focusScore: 2, // 1-5 scale
+    drivingTime: 45,
+    phoneUsagePercent: 15,
+    averageSpeed: 35,
+    focusScore: 2,
   };
 
   const weekData = [
@@ -41,14 +39,14 @@ const SafetyStats = () => {
 
   return (
     <TooltipProvider>
-      <div className="bg-white rounded-xl p-6 shadow-lg mt-6 animate-fade-in">
+      <div className="bg-white rounded-2xl p-6 shadow-sm transition-all duration-300 animate-fade-in">
         <div className="flex items-center gap-2 mb-6">
           <Brain className="w-6 h-6 text-primary" />
-          <h2 className="text-xl font-semibold text-secondary">Today's Driving Stats</h2>
+          <h2 className="text-xl font-semibold text-black">Today's Driving Stats</h2>
         </div>
         
-        <div className="flex flex-col space-y-3">
-          <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+        <div className="flex flex-col space-y-4">
+          <div className="flex items-center p-4 bg-gray-50/80 rounded-xl transition-all duration-200 hover:bg-gray-50">
             <Timer className="w-8 h-8 text-primary mr-4" />
             <div className="flex-1">
               <div className="flex items-center justify-between">
@@ -62,11 +60,11 @@ const SafetyStats = () => {
                   </TooltipContent>
                 </UITooltip>
               </div>
-              <div className="text-xl font-bold text-secondary">{stats.drivingTime}m</div>
+              <div className="text-xl font-bold text-black">{stats.drivingTime}m</div>
             </div>
           </div>
 
-          <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center p-4 bg-gray-50/80 rounded-xl transition-all duration-200 hover:bg-gray-50">
             <Phone className="w-8 h-8 text-warning mr-4" />
             <div className="flex-1">
               <div className="flex items-center justify-between">
@@ -80,11 +78,11 @@ const SafetyStats = () => {
                   </TooltipContent>
                 </UITooltip>
               </div>
-              <div className="text-xl font-bold text-secondary">{stats.phoneUsagePercent}%</div>
+              <div className="text-xl font-bold text-black">{stats.phoneUsagePercent}%</div>
             </div>
           </div>
 
-          <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center p-4 bg-gray-50/80 rounded-xl transition-all duration-200 hover:bg-gray-50">
             <Gauge className="w-8 h-8 text-primary mr-4" />
             <div className="flex-1">
               <div className="flex items-center justify-between">
@@ -98,11 +96,11 @@ const SafetyStats = () => {
                   </TooltipContent>
                 </UITooltip>
               </div>
-              <div className="text-xl font-bold text-secondary">{stats.averageSpeed} km/h</div>
+              <div className="text-xl font-bold text-black">{stats.averageSpeed} km/h</div>
             </div>
           </div>
 
-          <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center p-4 bg-gray-50/80 rounded-xl transition-all duration-200 hover:bg-gray-50">
             <Brain className={`w-8 h-8 ${getFocusScoreColor(stats.focusScore)} mr-4`} />
             <div className="flex-1">
               <div className="flex items-center justify-between">
@@ -128,15 +126,15 @@ const SafetyStats = () => {
           </div>
         </div>
 
-        <div className="mt-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Weekly Driving Time (minutes)</h3>
+        <div className="mt-8">
+          <h3 className="text-sm font-medium text-black mb-4">Weekly Driving Time (minutes)</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={weekData}>
                 <XAxis dataKey="day" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="minutes" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="minutes" fill="#4B56F0" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
