@@ -1,5 +1,5 @@
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { Shield } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -13,11 +13,18 @@ const QoshoToggle = () => {
 
   return (
     <div className="flex items-center justify-between bg-white rounded-xl p-6 shadow-lg animate-fade-in">
-      <div className="flex flex-col gap-2">
-        <h2 className="text-xl font-semibold text-secondary">Active Qosho</h2>
-        <p className="text-sm text-muted-foreground">
-          {isEnabled ? "If the toggle is on, the selected apps will be blocked when your speed is above 20km/h" : "Inactive - No apps will be blocked"}
-        </p>
+      <div className="flex items-center gap-4">
+        <div className="bg-primary/10 rounded-full p-2">
+          <Shield className="w-6 h-6 text-primary" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <h2 className="text-lg font-semibold text-gray-900">Active Protection</h2>
+          <p className="text-sm text-gray-500">
+            {isEnabled 
+              ? "Selected apps will be blocked while driving" 
+              : "No apps will be blocked"}
+          </p>
+        </div>
       </div>
       <Switch checked={isEnabled} onCheckedChange={handleToggle} />
     </div>

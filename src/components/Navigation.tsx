@@ -1,4 +1,4 @@
-import { Home, Plus, Activity, User } from "lucide-react";
+import { Home, Shield, Activity, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const Navigation = () => {
@@ -26,14 +26,14 @@ const Navigation = () => {
             isActive("/apps") ? "text-primary" : "text-gray-400"
           }`}
         >
-          <Activity className="w-6 h-6" strokeWidth={2} />
+          <Shield className="w-6 h-6" strokeWidth={2} />
         </Link>
 
         <button 
           className="bg-primary rounded-full p-4 -mt-8 shadow-lg hover:bg-primary/90 transition-colors"
-          aria-label="Add new"
+          aria-label="Toggle Protection"
         >
-          <Plus className="w-6 h-6 text-white" strokeWidth={2} />
+          <Activity className="w-6 h-6 text-white" strokeWidth={2} />
         </button>
 
         <Link
