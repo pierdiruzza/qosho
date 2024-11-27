@@ -10,7 +10,7 @@ const Navigation = () => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
-      <div className="max-w-md mx-auto flex justify-between items-center">
+      <div className="max-w-md mx-auto flex justify-evenly items-center">
         <Link
           to="/"
           className={`flex flex-col items-center gap-1 ${isActive("/")}`}
