@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Check } from 'lucide-react';
+import { Plus, Check } from 'lucide-react';
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { App } from "@/types/app";
-import AppHeader from './AppHeader';
 import AppCategory from './AppCategory';
 
 interface AppBlockListProps {
@@ -27,14 +25,12 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
 
   const loadApps = async () => {
     try {
-      // Load all apps
       const { data: apps, error: appsError } = await supabase
         .from('apps')
         .select('*');
 
       if (appsError) throw appsError;
 
-      // Load user's blocked apps
       const { data: blockedAppsData, error: blockedError } = await supabase
         .from('blocked_apps')
         .select('app_id')
@@ -44,7 +40,6 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
 
       const blockedAppIds = blockedAppsData?.map(row => row.app_id) || [];
       
-      // Combine the data
       const appsWithBlockedStatus = apps?.map(app => ({
         ...app,
         blocked: blockedAppIds.includes(app.id)
@@ -59,85 +54,33 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
     }
   };
 
-  if (!editable) {
-    return (
-      <div className="bg-white rounded-2xl p-4 shadow-sm">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium">App Group</h3>
-          <div className="flex items-center gap-4">
-            <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-medium">
-              Blocked
-            </span>
-            <Button
-              variant="ghost"
-              className="text-blue-600 hover:text-blue-700"
-              onClick={() => navigate('/apps')}
-            >
-              EDIT
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const toggleApp = (id: number) => {
-    if (!editable) return;
-    setBlockedApps(apps =>
-      apps.map(app =>
-        app.id === id ? { ...app, blocked: !app.blocked } : app
-      )
-    );
-  };
-
-  const handleClearAll = async () => {
+  const toggleApp = async (id: number) => {
     if (!editable || !session?.user?.id) return;
+    
     try {
-      const { error } = await supabase
-        .from('blocked_apps')
-        .delete()
-        .eq('user_id', session.user.id);
+      const app = blockedApps.find(a => a.id === id);
+      if (!app) return;
 
-      if (error) throw error;
-
-      setBlockedApps(apps => apps.map(app => ({ ...app, blocked: false })));
-      toast.success('All apps unblocked successfully!');
-    } catch (error) {
-      console.error('Error clearing blocked apps:', error);
-      toast.error('Failed to clear blocked apps');
-    }
-  };
-
-  const handleSave = async () => {
-    if (!editable || !session?.user?.id) return;
-
-    try {
-      const { error: deleteError } = await supabase
-        .from('blocked_apps')
-        .delete()
-        .eq('user_id', session.user.id);
-
-      if (deleteError) throw deleteError;
-
-      const appsToBlock = blockedApps.filter(app => app.blocked);
-      if (appsToBlock.length > 0) {
-        const { error: insertError } = await supabase
+      if (app.blocked) {
+        await supabase
           .from('blocked_apps')
-          .insert(
-            appsToBlock.map(app => ({
-              user_id: session.user.id,
-              app_id: app.id
-            }))
-          );
-
-        if (insertError) throw insertError;
+          .delete()
+          .eq('user_id', session.user.id)
+          .eq('app_id', id);
+      } else {
+        await supabase
+          .from('blocked_apps')
+          .insert({ user_id: session.user.id, app_id: id });
       }
 
-      toast.success('Apps blocked successfully!');
-      await loadApps();
+      setBlockedApps(apps =>
+        apps.map(app =>
+          app.id === id ? { ...app, blocked: !app.blocked } : app
+        )
+      );
     } catch (error) {
-      console.error('Error saving blocked apps:', error);
-      toast.error('Failed to save blocked apps');
+      console.error('Error toggling app:', error);
+      toast.error('Failed to update app status');
     }
   };
 
@@ -157,9 +100,12 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <AppHeader editable={editable} onClearAll={handleClearAll} />
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold text-gray-900">Blocked Apps</h1>
+        <p className="text-gray-500">Choose the app you want to block while you drive</p>
+      </div>
       
-      <div className="space-y-4">
+      <div className="space-y-6">
         {groupedApps.map(([category, apps]) => (
           <AppCategory
             key={category}
@@ -170,14 +116,6 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
           />
         ))}
       </div>
-      
-      {editable && (
-        <div className="mt-6">
-          <Button onClick={handleSave} className="w-full bg-primary hover:bg-primary/90">
-            Save Changes
-          </Button>
-        </div>
-      )}
     </div>
   );
 };

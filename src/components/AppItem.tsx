@@ -1,4 +1,4 @@
-import { Checkbox } from "@/components/ui/checkbox";
+import { Plus, Check } from "lucide-react";
 
 interface AppItemProps {
   id: number;
@@ -10,27 +10,30 @@ interface AppItemProps {
 
 const AppItem = ({ id, name, blocked, editable = false, onToggle }: AppItemProps) => {
   return (
-    <div className="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
-      {editable ? (
-        <>
-          <Checkbox
-            id={`app-${id}`}
-            checked={blocked}
-            onCheckedChange={() => onToggle?.(id)}
-            className="h-5 w-5 rounded-md border-gray-200"
-          />
-          <label
-            htmlFor={`app-${id}`}
-            className="ml-3 text-sm font-medium text-gray-700 cursor-pointer flex-1"
-          >
-            {name}
-          </label>
-        </>
-      ) : (
-        <div className="text-sm font-medium text-gray-700 flex-1 pl-2">
-          {name}
-        </div>
-      )}
+    <div 
+      className={`
+        flex items-center justify-between p-4 
+        rounded-xl bg-white transition-colors
+        ${editable ? 'cursor-pointer hover:bg-gray-50' : ''}
+      `}
+      onClick={() => editable && onToggle?.(id)}
+    >
+      <div className="space-y-1">
+        <h4 className="font-medium text-gray-900">{name}</h4>
+        <p className="text-sm text-gray-500">
+          {blocked 
+            ? "You've already selected this app."
+            : 'Click on "+" to select this app'}
+        </p>
+      </div>
+      <div className={`
+        w-8 h-8 flex items-center justify-center rounded-full
+        ${blocked 
+          ? 'bg-primary text-white' 
+          : 'border-2 border-gray-200 text-gray-400'}
+      `}>
+        {blocked ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+      </div>
     </div>
   );
 };
