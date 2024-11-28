@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { App } from "@/types/app";
 import AppCategory from './AppCategory';
+import AppHeader from './AppHeader';
 
 interface AppBlockListProps {
   editable?: boolean;
@@ -18,9 +19,7 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (session?.user?.id) {
-      loadApps();
-    }
+    loadApps();
   }, [session?.user?.id]);
 
   const loadApps = async () => {
@@ -31,14 +30,17 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
 
       if (appsError) throw appsError;
 
-      const { data: blockedAppsData, error: blockedError } = await supabase
-        .from('blocked_apps')
-        .select('app_id')
-        .eq('user_id', session?.user?.id);
+      let blockedAppIds: number[] = [];
+      
+      if (session?.user?.id) {
+        const { data: blockedAppsData, error: blockedError } = await supabase
+          .from('blocked_apps')
+          .select('app_id')
+          .eq('user_id', session.user.id);
 
-      if (blockedError) throw blockedError;
-
-      const blockedAppIds = blockedAppsData?.map(row => row.app_id) || [];
+        if (blockedError) throw blockedError;
+        blockedAppIds = blockedAppsData?.map(row => row.app_id) || [];
+      }
       
       const appsWithBlockedStatus = apps?.map(app => ({
         ...app,
