@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { App } from "@/types/app";
-import AppCategory from "./AppCategory";
 
 interface AppBlockListProps {
   editable?: boolean;
@@ -15,18 +14,7 @@ interface AppBlockListProps {
 const AppBlockList = ({ editable = false }: AppBlockListProps) => {
   const navigate = useNavigate();
   const { session } = useSessionContext();
-  const [blockedApps, setBlockedApps] = useState<App[]>([
-    { id: 1, name: 'Instagram', blocked: false, category: 'Social Media' },
-    { id: 2, name: 'TikTok', blocked: false, category: 'Social Media' },
-    { id: 3, name: 'Facebook', blocked: false, category: 'Social Media' },
-    { id: 4, name: 'Twitter', blocked: false, category: 'Social Media' },
-    { id: 5, name: 'LinkedIn', blocked: false, category: 'Social Media' },
-    { id: 6, name: 'WhatsApp', blocked: false, category: 'Messaging' },
-    { id: 7, name: 'Telegram', blocked: false, category: 'Messaging' },
-    { id: 8, name: 'Gmail', blocked: false, category: 'Work' },
-    { id: 9, name: 'Outlook', blocked: false, category: 'Work' },
-    { id: 10, name: 'Slack', blocked: false, category: 'Work' },
-  ]);
+  const [blockedApps, setBlockedApps] = useState<App[]>([]);
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -57,6 +45,28 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
       toast.error('Failed to load blocked apps');
     }
   };
+
+  if (!editable) {
+    return (
+      <div className="bg-white rounded-2xl p-4 shadow-sm">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium">App Group</h3>
+          <div className="flex items-center gap-4">
+            <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-medium">
+              Blocked
+            </span>
+            <Button
+              variant="ghost"
+              className="text-blue-600 hover:text-blue-700"
+              onClick={() => navigate('/apps')}
+            >
+              EDIT
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const toggleApp = (id: number) => {
     if (!editable) return;
