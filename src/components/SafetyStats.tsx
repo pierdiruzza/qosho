@@ -1,128 +1,113 @@
-import { Timer, Phone, Gauge, Brain, Info, ChartLine } from 'lucide-react';
+import { Timer, Phone, Gauge, Brain, ChartLine } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import {
-  Tooltip as UITooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 const SafetyStats = () => {
   const stats = {
     drivingTime: 45,
     phoneUsagePercent: 15,
-    averageSpeed: 35,
+    averageSpeed: 45,
     focusScore: 2,
+    pointsEarned: 322,
+    bestStreak: 22
   };
 
   const weekData = [
-    { day: 'Mon', minutes: 45 },
-    { day: 'Tue', minutes: 30 },
-    { day: 'Wed', minutes: 60 },
-    { day: 'Thu', minutes: 40 },
-    { day: 'Fri', minutes: 55 },
-    { day: 'Sat', minutes: 25 },
-    { day: 'Sun', minutes: 35 },
+    { day: '4', minutes: 30 },
+    { day: '5', minutes: 25 },
+    { day: '6', minutes: 45 },
+    { day: '7', minutes: 35 },
+    { day: '8', minutes: 55 },
+    { day: '9', minutes: 40 },
+    { day: '10', minutes: 50 },
+    { day: '11', minutes: 60 },
   ];
-
-  const getFocusScoreColor = (score: number) => {
-    if (score <= 2) return 'text-success';
-    if (score <= 4) return 'text-warning';
-    return 'text-destructive';
-  };
-
-  const getFocusScoreText = (score: number) => {
-    if (score <= 2) return 'Focused 😊';
-    if (score <= 4) return 'Somewhat Distracted 😐';
-    return 'Very Distracted 😫';
-  };
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-3xl p-6 shadow-sm transition-all duration-300">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-black">All Habits</h2>
-          <button className="text-gray-400 hover:text-gray-600">
-            <Info className="w-5 h-5" />
-          </button>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gray-50/80 rounded-2xl p-4 transition-all duration-200 hover:bg-gray-50">
-            <div className="flex items-center gap-3 mb-2">
-              <Timer className="w-5 h-5 text-primary" />
-              <span className="text-sm text-gray-600">Driving Time</span>
+      <div className="bg-white rounded-3xl p-6 shadow-sm">
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+              <Timer className="w-4 h-4 text-gray-600" />
             </div>
-            <p className="text-2xl font-bold text-black">{stats.drivingTime}m</p>
+            <h3 className="text-sm font-medium text-gray-900">Your driving stats</h3>
           </div>
 
-          <div className="bg-gray-50/80 rounded-2xl p-4 transition-all duration-200 hover:bg-gray-50">
-            <div className="flex items-center gap-3 mb-2">
-              <Phone className="w-5 h-5 text-warning" />
-              <span className="text-sm text-gray-600">Phone Usage</span>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-1">
+              <p className="text-xs text-gray-500 uppercase">Driving time today</p>
+              <p className="text-2xl font-semibold text-green-500">{stats.drivingTime} minutes</p>
             </div>
-            <p className="text-2xl font-bold text-black">{stats.phoneUsagePercent}%</p>
-          </div>
-
-          <div className="bg-gray-50/80 rounded-2xl p-4 transition-all duration-200 hover:bg-gray-50">
-            <div className="flex items-center gap-3 mb-2">
-              <Gauge className="w-5 h-5 text-primary" />
-              <span className="text-sm text-gray-600">Average Speed</span>
+            <div className="space-y-1">
+              <p className="text-xs text-gray-500 uppercase">Phone usage</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.phoneUsagePercent}%</p>
             </div>
-            <p className="text-2xl font-bold text-black">{stats.averageSpeed} km/h</p>
-          </div>
-
-          <div className="bg-gray-50/80 rounded-2xl p-4 transition-all duration-200 hover:bg-gray-50">
-            <div className="flex items-center gap-3 mb-2">
-              <Brain className={`w-5 h-5 ${getFocusScoreColor(stats.focusScore)}`} />
-              <span className="text-sm text-gray-600">Focus Score</span>
+            <div className="space-y-1">
+              <p className="text-xs text-gray-500 uppercase">Average speed</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.averageSpeed} km/h</p>
             </div>
-            <div className="flex items-center gap-2">
-              <span className={`text-2xl font-bold ${getFocusScoreColor(stats.focusScore)}`}>
-                {stats.focusScore}/5
-              </span>
-              <span className="text-xs text-gray-500">
-                {getFocusScoreText(stats.focusScore)}
-              </span>
+            <div className="space-y-1">
+              <p className="text-xs text-gray-500 uppercase">Focus score</p>
+              <p className="text-2xl font-semibold text-red-500">{stats.focusScore}/5</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs text-gray-500 uppercase">Points earned</p>
+              <p className="text-2xl font-semibold text-gray-900">🏆 {stats.pointsEarned}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs text-gray-500 uppercase">Best streak day</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.bestStreak}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl p-6 shadow-sm transition-all duration-300">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <ChartLine className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold text-black">Habits</h3>
+      <div className="bg-white rounded-3xl p-6 shadow-sm">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ChartLine className="w-5 h-5 text-gray-600" />
+              <h3 className="text-sm font-medium text-gray-900">Your weekly stats</h3>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-gray-500">🔥 Burn!</span>
+              <span className="text-xs text-orange-500">32 habits</span>
+            </div>
           </div>
-          <span className="text-sm text-gray-500">Compared to last week</span>
-        </div>
-        
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={weekData}>
-              <XAxis 
-                dataKey="day" 
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: '#666', fontSize: 12 }}
-              />
-              <YAxis 
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: '#666', fontSize: 12 }}
-              />
-              <Tooltip />
-              <Line 
-                type="monotone" 
-                dataKey="minutes" 
-                stroke="#4B56F0" 
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 6, fill: "#4B56F0" }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={weekData}>
+                <XAxis 
+                  dataKey="day" 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#666', fontSize: 12 }}
+                />
+                <YAxis 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#666', fontSize: 12 }}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    background: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                  }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="minutes" 
+                  stroke="#4B56F0"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 6, fill: "#4B56F0" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Shield, Trash2 } from 'lucide-react';
+import { Shield, Trash2, Plus, Check } from 'lucide-react';
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
@@ -132,46 +132,65 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold text-secondary-foreground">
-            {editable ? "Select Apps to Block" : "Blocked Apps"}
-          </h2>
+      {editable && (
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Shield className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-semibold text-gray-900">
+              {editable ? "Select Apps to Block" : "Blocked Apps"}
+            </h2>
+          </div>
+          <Button
+            variant="outline"
+            onClick={handleClearAll}
+            className="text-sm flex items-center gap-1 h-9"
+          >
+            <Trash2 className="w-4 h-4" />
+            Clear All
+          </Button>
         </div>
-        <div className="flex gap-2">
-          {editable && (
-            <Button
-              variant="outline"
-              onClick={handleClearAll}
-              className="text-sm flex items-center gap-1 h-9"
-            >
-              <Trash2 className="w-4 h-4" />
-              Clear All
-            </Button>
-          )}
-          {!editable && (
-            <Button
-              variant="outline"
-              onClick={() => navigate('/apps')}
-              className="text-sm h-9"
-            >
-              Manage apps
-            </Button>
-          )}
-        </div>
-      </div>
+      )}
+      
       <div className="space-y-4">
         {groupedApps.map(([category, apps]) => (
-          <AppCategory
-            key={category}
-            category={category}
-            apps={apps}
-            editable={editable}
-            onToggle={toggleApp}
-          />
+          <div key={category} className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-medium text-gray-500">{category}</h3>
+              {editable && (
+                <button className="text-primary text-sm font-medium">
+                  EDIT
+                </button>
+              )}
+            </div>
+            <div className="bg-white rounded-xl shadow-sm divide-y divide-gray-50">
+              {apps.map(app => (
+                <div
+                  key={app.id}
+                  className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                  onClick={() => editable && toggleApp(app.id)}
+                >
+                  <span className="text-sm text-gray-700">{app.name}</span>
+                  {editable ? (
+                    <button
+                      className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                        app.blocked
+                          ? 'bg-primary text-white'
+                          : 'border-2 border-gray-200'
+                      }`}
+                    >
+                      {app.blocked && <Check className="w-4 h-4" />}
+                      {!app.blocked && <Plus className="w-4 h-4 text-gray-400" />}
+                    </button>
+                  ) : app.blocked ? (
+                    <Check className="w-5 h-5 text-primary" />
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          </div>
         ))}
       </div>
+      
       {editable && (
         <div className="mt-6">
           <Button onClick={handleSave} className="w-full bg-primary hover:bg-primary/90">
