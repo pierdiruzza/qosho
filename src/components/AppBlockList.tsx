@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Shield, Trash2, Plus, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { App } from "@/types/app";
+import AppHeader from './AppHeader';
+import AppCategory from './AppCategory';
 
 interface AppBlockListProps {
   editable?: boolean;
@@ -15,34 +17,45 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
   const navigate = useNavigate();
   const { session } = useSessionContext();
   const [blockedApps, setBlockedApps] = useState<App[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (session?.user?.id) {
-      loadBlockedApps();
+      loadApps();
     }
   }, [session?.user?.id]);
 
-  const loadBlockedApps = async () => {
+  const loadApps = async () => {
     try {
-      const { data, error } = await supabase
+      // Load all apps
+      const { data: apps, error: appsError } = await supabase
+        .from('apps')
+        .select('*');
+
+      if (appsError) throw appsError;
+
+      // Load user's blocked apps
+      const { data: blockedAppsData, error: blockedError } = await supabase
         .from('blocked_apps')
         .select('app_id')
         .eq('user_id', session?.user?.id);
 
-      if (error) throw error;
+      if (blockedError) throw blockedError;
 
-      if (data) {
-        const blockedAppIds = data.map(row => row.app_id);
-        setBlockedApps(prevApps =>
-          prevApps.map(app => ({
-            ...app,
-            blocked: blockedAppIds.includes(app.id)
-          }))
-        );
-      }
+      const blockedAppIds = blockedAppsData?.map(row => row.app_id) || [];
+      
+      // Combine the data
+      const appsWithBlockedStatus = apps?.map(app => ({
+        ...app,
+        blocked: blockedAppIds.includes(app.id)
+      })) || [];
+
+      setBlockedApps(appsWithBlockedStatus);
     } catch (error) {
-      console.error('Error loading blocked apps:', error);
-      toast.error('Failed to load blocked apps');
+      console.error('Error loading apps:', error);
+      toast.error('Failed to load apps');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -120,8 +133,8 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
         if (insertError) throw insertError;
       }
 
-      await loadBlockedApps();
       toast.success('Apps blocked successfully!');
+      await loadApps();
     } catch (error) {
       console.error('Error saving blocked apps:', error);
       toast.error('Failed to save blocked apps');
@@ -129,75 +142,32 @@ const AppBlockList = ({ editable = false }: AppBlockListProps) => {
   };
 
   const groupedApps = Object.entries(
-    blockedApps
-      .filter(app => editable || app.blocked)
-      .reduce((acc, app) => {
-        if (!acc[app.category]) {
-          acc[app.category] = [];
-        }
-        acc[app.category].push(app);
-        return acc;
-      }, {} as Record<string, App[]>)
+    blockedApps.reduce((acc, app) => {
+      if (!acc[app.category]) {
+        acc[app.category] = [];
+      }
+      acc[app.category].push(app);
+      return acc;
+    }, {} as Record<string, App[]>)
   );
+
+  if (isLoading) {
+    return <div className="animate-pulse">Loading apps...</div>;
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {editable && (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-primary" />
-            <h2 className="text-lg font-semibold text-gray-900">
-              {editable ? "Select Apps to Block" : "Blocked Apps"}
-            </h2>
-          </div>
-          <Button
-            variant="outline"
-            onClick={handleClearAll}
-            className="text-sm flex items-center gap-1 h-9"
-          >
-            <Trash2 className="w-4 h-4" />
-            Clear All
-          </Button>
-        </div>
-      )}
+      <AppHeader editable={editable} onClearAll={handleClearAll} />
       
       <div className="space-y-4">
         {groupedApps.map(([category, apps]) => (
-          <div key={category} className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-gray-500">{category}</h3>
-              {editable && (
-                <button className="text-primary text-sm font-medium">
-                  EDIT
-                </button>
-              )}
-            </div>
-            <div className="bg-white rounded-xl shadow-sm divide-y divide-gray-50">
-              {apps.map(app => (
-                <div
-                  key={app.id}
-                  className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                  onClick={() => editable && toggleApp(app.id)}
-                >
-                  <span className="text-sm text-gray-700">{app.name}</span>
-                  {editable ? (
-                    <button
-                      className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                        app.blocked
-                          ? 'bg-primary text-white'
-                          : 'border-2 border-gray-200'
-                      }`}
-                    >
-                      {app.blocked && <Check className="w-4 h-4" />}
-                      {!app.blocked && <Plus className="w-4 h-4 text-gray-400" />}
-                    </button>
-                  ) : app.blocked ? (
-                    <Check className="w-5 h-5 text-primary" />
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          </div>
+          <AppCategory
+            key={category}
+            category={category}
+            apps={apps}
+            editable={editable}
+            onToggle={toggleApp}
+          />
         ))}
       </div>
       
