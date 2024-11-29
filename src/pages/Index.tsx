@@ -1,6 +1,5 @@
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import SpeedDisplay from "@/components/SpeedDisplay";
-import AppBlockList from "@/components/AppBlockList";
 import QoshoToggle from "@/components/QoshoToggle";
 import Navigation from "@/components/Navigation";
 
@@ -37,12 +36,6 @@ const Index = () => {
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-gray-900">Your current speed</h2>
           <SpeedDisplay />
-        </div>
-
-        {/* Blocked Apps */}
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-gray-900">Blocked Apps</h2>
-          <AppBlockList editable={false} />
         </div>
       </div>
       <Navigation />
