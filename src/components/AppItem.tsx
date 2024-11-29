@@ -27,9 +27,9 @@ const AppItem = ({ id, name, blocked, editable = false, onToggle }: AppItemProps
         </p>
       </div>
       <div className={`
-        w-8 h-8 flex items-center justify-center rounded-full transition-all
+        w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200
         ${blocked 
-          ? 'bg-green-500 text-white' 
+          ? 'bg-success text-white' 
           : 'border-2 border-gray-200 text-gray-400'}
       `}>
         {blocked ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
