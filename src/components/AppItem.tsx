@@ -30,8 +30,8 @@ const AppItem = ({ id, name, blocked, editable = false, onToggle }: AppItemProps
         w-8 h-8 flex items-center justify-center rounded-full
         transition-all duration-300 ease-in-out
         ${blocked 
-          ? 'bg-success text-white scale-110' 
-          : 'bg-white border-2 border-gray-200 text-gray-400 hover:border-success/50'}
+          ? 'bg-[#22C55E] text-white scale-110' 
+          : 'bg-white border-2 border-gray-200 text-gray-400 hover:border-[#22C55E]/50'}
       `}>
         {blocked ? (
           <Check className="w-5 h-5 animate-fade-in" />
