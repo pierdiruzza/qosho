@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { toast } from "sonner";
 
-const SpeedDisplay = () => {
+interface SpeedDisplayProps {
+  onSpeedUpdate?: (speed: number) => void;
+}
+
+const SpeedDisplay = ({ onSpeedUpdate }: SpeedDisplayProps) => {
   const [speed, setSpeed] = useState(0);
   const [isDriving, setIsDriving] = useState(false);
 
@@ -15,7 +19,9 @@ const SpeedDisplay = () => {
             if (position.coords.speed !== null) {
               const speedKmh = (position.coords.speed * 3.6);
               setSpeed(speedKmh);
-              setIsDriving(speedKmh >= 20);
+              const isNowDriving = speedKmh >= 20;
+              setIsDriving(isNowDriving);
+              onSpeedUpdate?.(speedKmh);
             }
           },
           (error) => {
@@ -39,7 +45,9 @@ const SpeedDisplay = () => {
         const speedChange = Math.random() * 2 - 1;
         setSpeed(prevSpeed => {
           const newSpeed = Math.max(0, Math.min(120, prevSpeed + speedChange * 5));
-          setIsDriving(newSpeed >= 20);
+          const isNowDriving = newSpeed >= 20;
+          setIsDriving(isNowDriving);
+          onSpeedUpdate?.(newSpeed);
           return newSpeed;
         });
       }, 500);
@@ -51,7 +59,7 @@ const SpeedDisplay = () => {
     return () => {
       if (watchId) navigator.geolocation.clearWatch(watchId);
     };
-  }, []);
+  }, [onSpeedUpdate]);
 
   return (
     <div className={`rounded-2xl p-6 shadow-sm ${isDriving ? 'bg-red-500' : 'bg-green-500'}`}>
