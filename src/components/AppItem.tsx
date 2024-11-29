@@ -27,12 +27,17 @@ const AppItem = ({ id, name, blocked, editable = false, onToggle }: AppItemProps
         </p>
       </div>
       <div className={`
-        w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200
+        w-8 h-8 flex items-center justify-center rounded-full
+        transition-all duration-300 ease-in-out
         ${blocked 
-          ? 'bg-success text-white' 
-          : 'border-2 border-gray-200 text-gray-400'}
+          ? 'bg-success text-white scale-110' 
+          : 'bg-white border-2 border-gray-200 text-gray-400 hover:border-success/50'}
       `}>
-        {blocked ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+        {blocked ? (
+          <Check className="w-5 h-5 animate-fade-in" />
+        ) : (
+          <Plus className="w-5 h-5 animate-fade-in" />
+        )}
       </div>
     </div>
   );
