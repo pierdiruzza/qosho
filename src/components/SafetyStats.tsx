@@ -23,55 +23,55 @@ const SafetyStats = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-3xl p-6 shadow-sm">
-        <div className="space-y-6">
+    <div className="space-y-4">
+      <div className="bg-white rounded-3xl p-4 md:p-6 shadow-sm">
+        <div className="space-y-4 md:space-y-6">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-              <Timer className="w-4 h-4 text-gray-600" />
+            <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-100 flex items-center justify-center">
+              <Timer className="w-3 h-3 md:w-4 md:h-4 text-gray-600" />
             </div>
-            <h3 className="text-sm font-medium text-gray-900">Your driving stats</h3>
+            <h3 className="text-xs md:text-sm font-medium text-gray-900">Your driving stats</h3>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-1">
-              <p className="text-xs text-gray-500 uppercase">Driving time today</p>
-              <p className="text-2xl font-semibold text-green-500">{stats.drivingTime} minutes</p>
+          <div className="grid grid-cols-2 gap-4 md:gap-6">
+            <div className="space-y-0.5 md:space-y-1">
+              <p className="text-[10px] md:text-xs text-gray-500 uppercase">Driving time today</p>
+              <p className="text-lg md:text-2xl font-semibold text-green-500">{stats.drivingTime} minutes</p>
             </div>
-            <div className="space-y-1">
-              <p className="text-xs text-gray-500 uppercase">Phone usage</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.phoneUsagePercent}%</p>
+            <div className="space-y-0.5 md:space-y-1">
+              <p className="text-[10px] md:text-xs text-gray-500 uppercase">Phone usage</p>
+              <p className="text-lg md:text-2xl font-semibold text-gray-900">{stats.phoneUsagePercent}%</p>
             </div>
-            <div className="space-y-1">
-              <p className="text-xs text-gray-500 uppercase">Average speed</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.averageSpeed} km/h</p>
+            <div className="space-y-0.5 md:space-y-1">
+              <p className="text-[10px] md:text-xs text-gray-500 uppercase">Average speed</p>
+              <p className="text-lg md:text-2xl font-semibold text-gray-900">{stats.averageSpeed} km/h</p>
             </div>
-            <div className="space-y-1">
-              <p className="text-xs text-gray-500 uppercase">Focus score</p>
-              <p className="text-2xl font-semibold text-red-500">{stats.focusScore}/5</p>
+            <div className="space-y-0.5 md:space-y-1">
+              <p className="text-[10px] md:text-xs text-gray-500 uppercase">Focus score</p>
+              <p className="text-lg md:text-2xl font-semibold text-red-500">{stats.focusScore}/5</p>
             </div>
-            <div className="space-y-1">
-              <p className="text-xs text-gray-500 uppercase">Points earned</p>
-              <p className="text-2xl font-semibold text-gray-900">🏆 {stats.pointsEarned}</p>
+            <div className="space-y-0.5 md:space-y-1">
+              <p className="text-[10px] md:text-xs text-gray-500 uppercase">Points earned</p>
+              <p className="text-lg md:text-2xl font-semibold text-gray-900">🏆 {stats.pointsEarned}</p>
             </div>
-            <div className="space-y-1">
-              <p className="text-xs text-gray-500 uppercase">Best streak day</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.bestStreak}</p>
+            <div className="space-y-0.5 md:space-y-1">
+              <p className="text-[10px] md:text-xs text-gray-500 uppercase">Best streak day</p>
+              <p className="text-lg md:text-2xl font-semibold text-gray-900">{stats.bestStreak}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl p-6 shadow-sm">
-        <div className="space-y-6">
+      <div className="bg-white rounded-3xl p-4 md:p-6 shadow-sm">
+        <div className="space-y-4 md:space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <ChartLine className="w-5 h-5 text-gray-600" />
-              <h3 className="text-sm font-medium text-gray-900">Your weekly stats</h3>
+              <ChartLine className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
+              <h3 className="text-xs md:text-sm font-medium text-gray-900">Your weekly stats</h3>
             </div>
             <div className="flex items-center gap-1">
-              <span className="text-xs text-gray-500">🔥 Burn!</span>
-              <span className="text-xs text-orange-500">32 habits</span>
+              <span className="text-[10px] md:text-xs text-gray-500">🔥 Burn!</span>
+              <span className="text-[10px] md:text-xs text-orange-500">32 habits</span>
             </div>
           </div>
 
@@ -82,12 +82,12 @@ const SafetyStats = () => {
                   dataKey="day" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#666', fontSize: 12 }}
+                  tick={{ fill: '#666', fontSize: 10 }}
                 />
                 <YAxis 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#666', fontSize: 12 }}
+                  tick={{ fill: '#666', fontSize: 10 }}
                 />
                 <Tooltip 
                   contentStyle={{
@@ -103,7 +103,7 @@ const SafetyStats = () => {
                   stroke="#4B56F0"
                   strokeWidth={2}
                   dot={false}
-                  activeDot={{ r: 6, fill: "#4B56F0" }}
+                  activeDot={{ r: 4, fill: "#4B56F0" }}
                 />
               </LineChart>
             </ResponsiveContainer>
