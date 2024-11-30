@@ -1,5 +1,11 @@
-import { Timer, Phone, Gauge, Brain, ChartLine } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { Timer, Phone, Gauge, Brain, ChartLine, Info } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const SafetyStats = () => {
   const stats = {
@@ -35,27 +41,99 @@ const SafetyStats = () => {
 
           <div className="grid grid-cols-2 gap-4 md:gap-6">
             <div className="space-y-0.5 md:space-y-1">
-              <p className="text-[10px] md:text-xs text-gray-500 uppercase">Driving time today</p>
+              <div className="flex items-center gap-1">
+                <p className="text-[10px] md:text-xs text-gray-500 uppercase">Driving time today</p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="w-3 h-3 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">Total time spent driving today</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <p className="text-lg md:text-2xl font-semibold text-green-500">{stats.drivingTime} minutes</p>
             </div>
             <div className="space-y-0.5 md:space-y-1">
-              <p className="text-[10px] md:text-xs text-gray-500 uppercase">Phone usage</p>
+              <div className="flex items-center gap-1">
+                <p className="text-[10px] md:text-xs text-gray-500 uppercase">Phone usage</p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="w-3 h-3 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">Percentage of time using phone while driving</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <p className="text-lg md:text-2xl font-semibold text-gray-900">{stats.phoneUsagePercent}%</p>
             </div>
             <div className="space-y-0.5 md:space-y-1">
-              <p className="text-[10px] md:text-xs text-gray-500 uppercase">Average speed</p>
+              <div className="flex items-center gap-1">
+                <p className="text-[10px] md:text-xs text-gray-500 uppercase">Average speed</p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="w-3 h-3 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">Average driving speed throughout the day</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <p className="text-lg md:text-2xl font-semibold text-gray-900">{stats.averageSpeed} km/h</p>
             </div>
             <div className="space-y-0.5 md:space-y-1">
-              <p className="text-[10px] md:text-xs text-gray-500 uppercase">Focus score</p>
+              <div className="flex items-center gap-1">
+                <p className="text-[10px] md:text-xs text-gray-500 uppercase">Focus score</p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="w-3 h-3 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">Your driving focus score out of 5</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <p className="text-lg md:text-2xl font-semibold text-red-500">{stats.focusScore}/5</p>
             </div>
             <div className="space-y-0.5 md:space-y-1">
-              <p className="text-[10px] md:text-xs text-gray-500 uppercase">Points earned</p>
+              <div className="flex items-center gap-1">
+                <p className="text-[10px] md:text-xs text-gray-500 uppercase">Points earned</p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="w-3 h-3 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">Total points earned from safe driving</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <p className="text-lg md:text-2xl font-semibold text-gray-900">🏆 {stats.pointsEarned}</p>
             </div>
             <div className="space-y-0.5 md:space-y-1">
-              <p className="text-[10px] md:text-xs text-gray-500 uppercase">Best streak day</p>
+              <div className="flex items-center gap-1">
+                <p className="text-[10px] md:text-xs text-gray-500 uppercase">Best streak day</p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="w-3 h-3 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">Your longest streak of safe driving days</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <p className="text-lg md:text-2xl font-semibold text-gray-900">{stats.bestStreak}</p>
             </div>
           </div>
@@ -68,9 +146,6 @@ const SafetyStats = () => {
             <div className="flex items-center gap-2">
               <ChartLine className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
               <h3 className="text-xs md:text-sm font-medium text-gray-900">Your weekly stats</h3>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="text-[10px] md:text-xs text-orange-500">32 habits</span>
             </div>
           </div>
 
@@ -88,7 +163,7 @@ const SafetyStats = () => {
                   tickLine={false}
                   tick={{ fill: '#666', fontSize: 10 }}
                 />
-                <Tooltip 
+                <RechartsTooltip 
                   contentStyle={{
                     background: 'white',
                     border: 'none',
