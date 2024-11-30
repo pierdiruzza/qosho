@@ -70,7 +70,6 @@ const SafetyStats = () => {
               <h3 className="text-xs md:text-sm font-medium text-gray-900">Your weekly stats</h3>
             </div>
             <div className="flex items-center gap-1">
-              <span className="text-[10px] md:text-xs text-gray-500">🔥 Burn!</span>
               <span className="text-[10px] md:text-xs text-orange-500">32 habits</span>
             </div>
           </div>
