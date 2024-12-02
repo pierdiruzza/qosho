@@ -2,11 +2,16 @@ import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { toast } from "sonner";
 
-const QoshoToggle = () => {
+interface QoshoToggleProps {
+  onToggleChange?: (enabled: boolean) => void;
+}
+
+const QoshoToggle = ({ onToggleChange }: QoshoToggleProps) => {
   const [isEnabled, setIsEnabled] = useState(true);
 
   const handleToggle = (checked: boolean) => {
     setIsEnabled(checked);
+    onToggleChange?.(checked);
     toast.info(checked ? "QOSHO protection enabled" : "QOSHO protection disabled");
   };
 
