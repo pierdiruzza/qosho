@@ -18,7 +18,10 @@ const QoshoToggle = ({ onToggleChange }: QoshoToggleProps) => {
   return (
     <div className="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm">
       <p className="text-gray-500 flex-1 pr-4">
-        If the Toggle is on, Qosho will automatically block your app while you drive.
+        {isEnabled 
+          ? "If the Toggle is on, Qosho will automatically block your app while you drive."
+          : "Qosho is not active. Turn the toggle on to let Qosho block automatically your app while you drive."
+        }
       </p>
       <Switch 
         checked={isEnabled} 
