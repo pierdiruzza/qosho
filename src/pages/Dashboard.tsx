@@ -16,20 +16,22 @@ const Dashboard = () => {
         <h1 className="text-2xl font-bold text-gray-900">Your Dashboard</h1>
         
         <div className="flex flex-col gap-4">
-          <div className="bg-gray-100 p-1 rounded-full flex justify-between w-fit">
-            {['Daily', 'Weekly', 'Monthly'].map((period) => (
-              <button
-                key={period}
-                onClick={() => setSelectedPeriod(period.toLowerCase() as any)}
-                className={`px-6 py-2 rounded-full text-sm transition-all ${
-                  selectedPeriod === period.toLowerCase()
-                    ? 'bg-white text-primary shadow-sm'
-                    : 'text-gray-600'
-                }`}
-              >
-                {period}
-              </button>
-            ))}
+          <div className="w-full flex justify-center bg-gray-100 p-1 rounded-full">
+            <div className="flex justify-between w-full max-w-[300px]">
+              {['Daily', 'Weekly', 'Monthly'].map((period) => (
+                <button
+                  key={period}
+                  onClick={() => setSelectedPeriod(period.toLowerCase() as any)}
+                  className={`px-6 py-2 rounded-full text-sm transition-all ${
+                    selectedPeriod === period.toLowerCase()
+                      ? 'bg-white text-primary shadow-sm'
+                      : 'text-gray-600'
+                  }`}
+                >
+                  {period}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="flex items-center justify-between">
