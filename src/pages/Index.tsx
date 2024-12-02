@@ -1,16 +1,38 @@
 import { useSessionContext } from "@supabase/auth-helpers-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Bell, Lock, Unlock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import SpeedDisplay from "@/components/SpeedDisplay";
 import QoshoToggle from "@/components/QoshoToggle";
-import AppBlockList from "@/components/AppBlockList";
 import Navigation from "@/components/Navigation";
 
 const Index = () => {
   const navigate = useNavigate();
   const { session } = useSessionContext();
   const userName = session?.user?.user_metadata?.full_name?.split(" ")[0] || "User";
+  const [blockedAppsCount, setBlockedAppsCount] = useState(0);
+  const [isDriving, setIsDriving] = useState(false);
   const [isQoshoEnabled, setIsQoshoEnabled] = useState(true);
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      loadBlockedAppsCount();
+    }
+  }, [session?.user?.id]);
+
+  const loadBlockedAppsCount = async () => {
+    const { count } = await supabase
+      .from('blocked_apps')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', session?.user?.id);
+    
+    setBlockedAppsCount(count || 0);
+  };
+
+  const onSpeedUpdate = (speed: number) => {
+    setIsDriving(speed >= 20);
+  };
 
   const handleToggleChange = (enabled: boolean) => {
     setIsQoshoEnabled(enabled);
@@ -46,11 +68,39 @@ const Index = () => {
             {/* Speed Display */}
             <div className="space-y-2">
               <h2 className="text-xl md:text-2xl font-bold text-gray-900">Your current speed</h2>
-              <SpeedDisplay />
+              <SpeedDisplay onSpeedUpdate={onSpeedUpdate} />
             </div>
 
-            {/* Blocked Apps */}
-            <AppBlockList />
+            {/* App Group Section */}
+            <div className="space-y-2">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900">App Group</h2>
+              <div className="bg-white rounded-2xl p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm md:text-base font-semibold">App Group</span>
+                    <div className={`flex items-center gap-1 text-xs md:text-sm ${isDriving ? 'text-red-500' : 'text-green-500'}`}>
+                      {isDriving ? (
+                        <>
+                          <Bell className="w-3 h-3 md:w-4 md:h-4" />
+                          <span>Blocked</span>
+                        </>
+                      ) : (
+                        <>
+                          <Unlock className="w-3 h-3 md:w-4 md:h-4" />
+                          <span>Unlocked</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => navigate('/apps')}
+                    className="bg-primary text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium hover:bg-primary/90 transition-colors whitespace-nowrap"
+                  >
+                    MANAGE APPS
+                  </button>
+                </div>
+              </div>
+            </div>
           </>
         )}
       </div>
