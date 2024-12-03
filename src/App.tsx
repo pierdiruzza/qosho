@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import { SessionContextProvider, useSession } from "@supabase/auth-helpers-react";
 import { supabase } from "./integrations/supabase/client";
 import Index from "@/pages/Index";
 import Login from "@/pages/Login";
@@ -7,7 +7,7 @@ import Apps from "@/pages/Apps";
 import Dashboard from "@/pages/Dashboard";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const session = supabase.auth.getSession();
+  const session = useSession();
 
   if (!session) {
     return <Navigate to="/login" replace />;
