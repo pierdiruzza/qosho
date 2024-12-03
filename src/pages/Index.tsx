@@ -1,4 +1,3 @@
-import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useState, useEffect } from "react";
 import { Bell, Lock, Unlock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -9,23 +8,18 @@ import Navigation from "@/components/Navigation";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { session } = useSessionContext();
-  const userName = session?.user?.user_metadata?.full_name?.split(" ")[0] || "User";
   const [blockedAppsCount, setBlockedAppsCount] = useState(0);
   const [isDriving, setIsDriving] = useState(false);
   const [isQoshoEnabled, setIsQoshoEnabled] = useState(true);
 
   useEffect(() => {
-    if (session?.user?.id) {
-      loadBlockedAppsCount();
-    }
-  }, [session?.user?.id]);
+    loadBlockedAppsCount();
+  }, []);
 
   const loadBlockedAppsCount = async () => {
     const { count } = await supabase
       .from('blocked_apps')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', session?.user?.id);
+      .select('*', { count: 'exact', head: true });
     
     setBlockedAppsCount(count || 0);
   };
@@ -45,7 +39,7 @@ const Index = () => {
         <div className="flex justify-between items-center">
           <div className="space-y-1">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-2">
-              Hi, {userName}
+              Welcome to Qosho
               <span role="img" aria-label="wave">👋</span>
             </h1>
             <p className="text-base md:text-lg text-gray-500">
