@@ -19,7 +19,7 @@ const QoshoToggle = ({ onToggleChange }: QoshoToggleProps) => {
     <div className="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm">
       <p className="text-gray-500 flex-1 pr-4">
         {isEnabled 
-          ? "If the Toggle is on, Qosho will automatically block your app while you drive."
+          ? "Great! From now on, Qosho will automatically block your app if you drive faster than 20km/h."
           : "To activate Qosho, turn the toggle on."
         }
       </p>
